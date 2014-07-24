@@ -40,4 +40,13 @@
     [self.view addSubview:self.targetView];
 }
 
+- (IBAction)reset:(id)sender {
+    self.targetView.transform = CGAffineTransformIdentity;
+}
+
+- (IBAction)undo:(id)sender {
+    
+}
+
+
 @end

@@ -98,6 +98,8 @@
         //CGPoint touchPoint = [recognizer locationInView:self];
         //NSLog(@"P(%f, %f)", touchPoint.x, touchPoint.y);
         
+        NSLog(@"Center(%f,%f)", self.center.x, self.center.y);
+        
         CGPoint translation = [recognizer translationInView:self];
         
         // [
