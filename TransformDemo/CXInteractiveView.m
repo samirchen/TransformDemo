@@ -85,6 +85,8 @@
     if (self.superview) {
         [self.superview bringSubviewToFront:self];
     }
+    
+    [self printFrameOfView:self];
 }
 
 - (void)pan:(UIPanGestureRecognizer *)recognizer {
@@ -98,7 +100,6 @@
         //CGPoint touchPoint = [recognizer locationInView:self];
         //NSLog(@"P(%f, %f)", touchPoint.x, touchPoint.y);
         
-        NSLog(@"Center(%f,%f)", self.center.x, self.center.y);
         
         CGPoint translation = [recognizer translationInView:self];
         
@@ -118,6 +119,8 @@
         [recognizer setTranslation:CGPointZero inView:self]; // 移动的时候，注意在最后重设当前的 translation。
         
     }
+    
+    [self printFrameOfView:self];
 }
 
 -(void) rotate:(UIRotationGestureRecognizer*)recognizer {
@@ -145,6 +148,9 @@
     // ]
     
     recognizer.rotation = 0;
+    
+    [self printFrameOfView:self];
+    
 }
 
 -(void) pinch:(UIPinchGestureRecognizer*)recognizer {
@@ -172,6 +178,9 @@
     // ]
     
     recognizer.scale = 1;
+    
+    
+    [self printFrameOfView:self];
 }
 
 #pragma mark - Action In Drag Area
@@ -181,14 +190,51 @@
         [self.superview bringSubviewToFront:self];
     }
     
-    if ((recognizer.state == UIGestureRecognizerStateChanged) || (recognizer.state == UIGestureRecognizerStateEnded)) {
-        
-        CGPoint translation = [recognizer translationInView:self];
-        self.transform = CGAffineTransformTranslate(self.transform, translation.x, translation.y);
-        
-        [recognizer setTranslation:CGPointZero inView:self]; // 移动的时候，注意在最后重设当前的 translation。
-
+    //http://code4app.com/ios/Sticker-View/51da3bcb6803faab15000001
+    
+    float deltaAngle = atan2(self.frame.origin.y+self.frame.size.height - self.center.y,
+                       self.frame.origin.x+self.frame.size.width - self.center.x);
+    
+    if (recognizer.state == UIGestureRecognizerStateBegan) {
+        //CGPoint touchBeganPoint = [recognizer locationInView:self];
     }
+    else if (recognizer.state == UIGestureRecognizerStateChanged) {
+        
+        // Calculate the rotation.
+        CGPoint translation = [recognizer translationInView:self];
+        CGFloat angle = atan2(translation.y-self.center.y, translation.x-self.center.x);
+        CGFloat rotation = deltaAngle - angle;
+        NSLog(@"Rotate Angle: %f", rotation);
+        //self.transform = CGAffineTransformMakeRotation(-angleDiff);
+        
+        
+        // Rotate the whole view.
+        // [
+        // Way 1: 利用API接口设置矩阵。
+        // 官方注释：Rotate `t' by `angle' radians and return the result:
+        // t' =  [ cos(angle) sin(angle) -sin(angle) cos(angle) 0 0 ] * t
+        //self.transform = CGAffineTransformRotate(self.transform, rotation);
+        //]
+        
+        // [
+        // Way 2: 直接设置矩阵。API CGAffineTransformRotate() 的做法。
+        //CGAffineTransform t = CGAffineTransformMake(cos(rotation), sin(rotation), -sin(rotation), cos(rotation), 0, 0);
+        //self.transform = CGAffineTransformConcat(t, self.transform); // 注意这里两个矩阵的顺序不能颠倒。
+        // ]
+        
+    }
+    else if (recognizer.state == UIGestureRecognizerStateEnded) {
+        
+    }
+    
+}
+
+#pragma mark - Utility
+-(void) printFrameOfView:(UIView*)v {
+    
+    NSLog(@"Frame:(%.2f, %.2f, %.2f, %.2f) Center:(%.2f, %.2f) Bounds:(%.2f, %.2f, %.2f, %.2f)", v.frame.origin.x, v.frame.origin.y, v.frame.size.width, v.frame.size.height, v.center.x, v.center.y, v.bounds.origin.x, v.bounds.origin.y, v.bounds.size.width, v.bounds.size.height);
+    
+    
     
 }
 
