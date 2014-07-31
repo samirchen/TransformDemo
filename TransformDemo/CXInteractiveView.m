@@ -87,6 +87,7 @@
     }
     
     [self printFrameOfView:self];
+    [self printFrameOfView:self.contentArea];
 }
 
 - (void)pan:(UIPanGestureRecognizer *)recognizer {
@@ -121,6 +122,7 @@
     }
     
     [self printFrameOfView:self];
+    [self printFrameOfView:self.contentArea];
 }
 
 -(void) rotate:(UIRotationGestureRecognizer*)recognizer {
@@ -129,6 +131,7 @@
     }
     
     CGFloat rotation = recognizer.rotation;
+    NSLog(@"Rotation: %f", rotation);
     
     // Rotate the subview who holds the recognizer.
     //recognizer.view.transform = CGAffineTransformRotate(recognizer.view.transform, rotation);
@@ -150,6 +153,7 @@
     recognizer.rotation = 0;
     
     [self printFrameOfView:self];
+    [self printFrameOfView:self.contentArea];
     
 }
 
@@ -159,6 +163,7 @@
     }
     
     CGFloat scale = recognizer.scale;
+    NSLog(@"Scale: %f", scale);
     
     // Pinch the subview who holds the recognizer.
     //recognizer.view.transform = CGAffineTransformScale(recognizer.view.transform, recognizer.scale, recognizer.scale);
@@ -181,6 +186,7 @@
     
     
     [self printFrameOfView:self];
+    [self printFrameOfView:self.contentArea];
 }
 
 #pragma mark - Action In Drag Area
@@ -233,8 +239,6 @@
 -(void) printFrameOfView:(UIView*)v {
     
     NSLog(@"Frame:(%.2f, %.2f, %.2f, %.2f) Center:(%.2f, %.2f) Bounds:(%.2f, %.2f, %.2f, %.2f)", v.frame.origin.x, v.frame.origin.y, v.frame.size.width, v.frame.size.height, v.center.x, v.center.y, v.bounds.origin.x, v.bounds.origin.y, v.bounds.size.width, v.bounds.size.height);
-    
-    
     
 }
 
