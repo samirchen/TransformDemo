@@ -36,18 +36,20 @@
 #pragma mark - Action
 -(void) setupUI {
     // View.
-    self.targetView = [[CXInteractiveView alloc] initWithFrame:CGRectMake(20, 70, 200, 250)];
+    self.targetView = [[CXInteractiveView alloc] initWithFrame:CGRectMake(20, 70, 250, 250)];
     [self.view addSubview:self.targetView];
 }
 
 - (IBAction)reset:(id)sender {
-    self.targetView.transform = CGAffineTransformIdentity;
+    
+    [UIView animateWithDuration:0.5 animations:^{
+        self.targetView.transform = CGAffineTransformIdentity;
+    } completion:nil];
+    
 }
 
 - (IBAction)undo:(id)sender {
-    self.targetView.frame = CGRectMake(30, 90, 220, 240);
-    
-    [self printFrameOfView:self.targetView];
+
 }
 
 #pragma mark - Utility

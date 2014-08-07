@@ -11,13 +11,15 @@
 @interface CXInteractiveView ()
 @property (nonatomic, strong) UIView* contentArea;
 @property (nonatomic, strong) UIView* dragArea;
+
+@property (nonatomic) CGFloat originAngle;
 @end
 
 @implementation CXInteractiveView
 
 - (id) init {
     
-    self = [self initWithFrame:CGRectMake(20, 70, 100, 250)];
+    self = [self initWithFrame:CGRectMake(20, 70, 250, 250)];
     
     return self;
 }
@@ -61,6 +63,10 @@
         [self addSubview:self.dragArea];
         
         
+        self.originAngle = atan2(CGRectGetMaxY(self.frame) - self.center.y, CGRectGetMaxX(self.frame) - self.center.x);
+        NSLog(@"deltaAngle: %.4f", self.originAngle);
+        
+        
         self.userInteractionEnabled = YES;
     }
     return self;
@@ -77,6 +83,7 @@
 
 -(void) layoutSubviews {
     NSLog(@"layoutSubviews...");
+    
 }
 
 #pragma mark - Action In Content Area
@@ -196,30 +203,48 @@
         [self.superview bringSubviewToFront:self];
     }
     
-    //http://code4app.com/ios/Sticker-View/51da3bcb6803faab15000001
     
-    float deltaAngle = atan2(self.frame.origin.y+self.frame.size.height - self.center.y,
-                       self.frame.origin.x+self.frame.size.width - self.center.x);
     
     if (recognizer.state == UIGestureRecognizerStateBegan) {
-        //CGPoint touchBeganPoint = [recognizer locationInView:self];
+        
     }
-    else if (recognizer.state == UIGestureRecognizerStateChanged) {
+    else if (recognizer.state == UIGestureRecognizerStateChanged || recognizer.state == UIGestureRecognizerStateEnded) {
         
-        // Calculate the rotation.
         CGPoint translation = [recognizer translationInView:self];
-        CGFloat angle = atan2(translation.y-self.center.y, translation.x-self.center.x);
-        CGFloat rotation = deltaAngle - angle;
-        NSLog(@"Rotate Angle: %f", rotation);
-        //self.transform = CGAffineTransformMakeRotation(-angleDiff);
         
+        
+        // Resize.
+        CGFloat xScale = (CGRectGetWidth(self.bounds)+translation.x)/CGRectGetWidth(self.bounds);
+        CGFloat yScale = (CGRectGetHeight(self.bounds)+translation.y)/CGRectGetHeight(self.bounds);
+        
+        // Pinch the whole view.
+        // [
+        // Way 1: 利用API接口设置矩阵。
+        // 官方注释：Scale `t' by `(sx, sy)' and return the result:
+        // t' = [ sx 0 0 sy 0 0 ] * t
+        //self.transform = CGAffineTransformScale(self.transform, scale, scale);
+        // ]
+        
+        // [
+        // Way 2: 直接设置矩阵。API CGAffineTransformScale() 的做法。
+        CGAffineTransform t = CGAffineTransformMake(xScale, 0, 0, yScale, 0, 0);
+        self.transform = CGAffineTransformConcat(t, self.transform); // 注意这里两个矩阵的顺序不能颠倒。
+        // ]
+        
+        
+        
+        /*
+        // Rotation.
+        CGFloat angle = atan2(translation.y, translation.x);
+        CGFloat rotation = (angle - self.originAngle)*0.03;
+        NSLog(@"Rotate Angle: %f", rotation);
         
         // Rotate the whole view.
         // [
         // Way 1: 利用API接口设置矩阵。
         // 官方注释：Rotate `t' by `angle' radians and return the result:
         // t' =  [ cos(angle) sin(angle) -sin(angle) cos(angle) 0 0 ] * t
-        //self.transform = CGAffineTransformRotate(self.transform, rotation);
+        self.transform = CGAffineTransformRotate(self.transform, rotation);
         //]
         
         // [
@@ -227,10 +252,11 @@
         //CGAffineTransform t = CGAffineTransformMake(cos(rotation), sin(rotation), -sin(rotation), cos(rotation), 0, 0);
         //self.transform = CGAffineTransformConcat(t, self.transform); // 注意这里两个矩阵的顺序不能颠倒。
         // ]
+        */
         
-    }
-    else if (recognizer.state == UIGestureRecognizerStateEnded) {
         
+        [recognizer setTranslation:CGPointZero inView:self]; // 移动的时候，注意在最后重设当前的 translation。
+
     }
     
 }
