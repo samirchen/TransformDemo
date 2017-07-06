@@ -34,7 +34,7 @@
 
 
 #pragma mark - Action
--(void) setupUI {
+- (void)setupUI {
     // View.
     self.targetView = [[CXInteractiveView alloc] initWithFrame:CGRectMake(20, 70, 250, 250)];
     [self.view addSubview:self.targetView];
@@ -53,7 +53,7 @@
 }
 
 #pragma mark - Utility
--(void) printFrameOfView:(UIView*)v {
+- (void)printFrameOfView:(UIView *)v {
     
     NSLog(@"Frame:(%.2f, %.2f, %.2f, %.2f) Center:(%.2f, %.2f) Bounds:(%.2f, %.2f, %.2f, %.2f)", v.frame.origin.x, v.frame.origin.y, v.frame.size.width, v.frame.size.height, v.center.x, v.center.y, v.bounds.origin.x, v.bounds.origin.y, v.bounds.size.width, v.bounds.size.height);
     
