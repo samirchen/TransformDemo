@@ -10,4 +10,6 @@
 
 @interface CXInteractiveView : UIView
 
+- (void)recoverTransform;
+
 @end

@@ -238,11 +238,22 @@
         self.transform = CGAffineTransformScale(self.transform, deltaScale, deltaScale);
         self.dragScale = newScale;
         
+        // 保持拖拽不被缩放，所以这里要缩放回来。
+        self.dragArea.transform = CGAffineTransformScale(self.dragArea.transform, 1 / deltaScale, 1 / deltaScale);
+        
     }
     
 }
 
 #pragma mark - Utility
+- (void)recoverTransform {
+    self.transform = CGAffineTransformIdentity;
+    self.dragArea.transform = CGAffineTransformIdentity;
+    self.contentArea.transform = CGAffineTransformIdentity;
+    self.dragRotateAngle = 0;
+    self.dragScale = 1;
+}
+
 - (void)printFrameOfView:(UIView *)v {
     NSLog(@"Frame:(%.2f, %.2f, %.2f, %.2f) Center:(%.2f, %.2f) Bounds:(%.2f, %.2f, %.2f, %.2f)", v.frame.origin.x, v.frame.origin.y, v.frame.size.width, v.frame.size.height, v.center.x, v.center.y, v.bounds.origin.x, v.bounds.origin.y, v.bounds.size.width, v.bounds.size.height);
 }

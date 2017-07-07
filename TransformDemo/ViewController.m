@@ -43,7 +43,7 @@
 - (IBAction)reset:(id)sender {
     
     [UIView animateWithDuration:0.5 animations:^{
-        self.targetView.transform = CGAffineTransformIdentity;
+        [self.targetView recoverTransform];
     } completion:nil];
     
 }
